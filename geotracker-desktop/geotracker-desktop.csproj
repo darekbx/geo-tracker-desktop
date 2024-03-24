@@ -223,6 +223,11 @@
       <DependentUpon>MapForm.cs</DependentUpon>
     </Compile>
     <Compile Include="GeoPoint.cs" />
+    <Compile Include="mapproviders\BingMapsProvider.cs" />
+    <Compile Include="mapproviders\OpenStreetMapsProvider.cs" />
+    <Compile Include="mapproviders\GoogleMapsTerrainProvider.cs" />
+    <Compile Include="mapproviders\GoogleMapsSatteliteProvider.cs" />
+    <Compile Include="mapproviders\IMapProvider.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="MapForm.resx">
