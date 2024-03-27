@@ -7,6 +7,8 @@ using System.Linq;
 using System.Windows.Forms;
 using geotracker_desktop.cloud;
 using geotracker_desktop.mapproviders;
+using geotracker_desktop.routes;
+using geotracker_desktop.utils;
 using GMap.NET;
 using GMap.NET.MapProviders;
 using GMap.NET.WindowsForms;
@@ -18,7 +20,6 @@ using GMap.NET.WindowsForms;
  *   - number of points
  *   - ability to undo added point
  *   - export to gpx
- * - check if map style can be changed (at least inversion)
  * - export to image (size of image can be defined in dialog)
  * 
  */
@@ -27,8 +28,11 @@ namespace geotracker_desktop
     public partial class MapForm : Form
     {
         private readonly ProjectIdProvider projectIdprovider = new ProjectIdProvider();
+        private readonly RouteCreator routeCreator = new RouteCreator();
         private readonly TracksProvider tracksProvider;
+
         private readonly GMapOverlay overlay;
+        private readonly GMapOverlay routeOverlay;
 
         private readonly List<IMapProvider> providers = new List<IMapProvider>
         {
@@ -52,13 +56,45 @@ namespace geotracker_desktop
             gMapControl.DragButton = MouseButtons.Left;
             gMapControl.ShowCenter = false;
 
-            overlay = new GMapOverlay("routeOverlay");
+            overlay = new GMapOverlay("routesOverlay");
+            routeOverlay = new GMapOverlay("routeOverlay");
+
             gMapControl.Overlays.Add(overlay);
+            gMapControl.Overlays.Add(routeOverlay);
 
             tracksProvider = new TracksProvider(projectIdprovider.GetApiKey());
 
+            routeCreator.RouteInvalidated += RouteCreator_RouteInvalidated;
+
             UpdateZoomLevellLabel();
             FillMapProviders();
+        }
+
+        private void RouteCreator_RouteInvalidated(object sender, List<PointLatLng> points)
+        {
+            var route = new GMapRoute(points, "user_route")
+            {
+                Stroke = new Pen(Color.Blue, 2.5F)
+            };
+
+            routeOverlay.Polygons.Clear();
+            routeOverlay.Routes.Clear();
+
+            foreach (var point in points)
+            {
+                double radiusInMeters = 10;
+                double radiusInDegrees = radiusInMeters / (2 * Math.PI * 6378137) * 360;
+
+                GMapPolygon circle = new GMapPolygon(PointLatLngUtils.GetCirclePoints(point, radiusInDegrees), "circle")
+                {
+                    Stroke = new Pen(Color.Blue, 2),
+                    Fill = new SolidBrush(Color.FromArgb(50, Color.Blue))
+                };
+
+                routeOverlay.Polygons.Add(circle);
+            }
+
+            routeOverlay.Routes.Add(route);
         }
 
         private void gMapControl1_LoadAsync(object sender, EventArgs e) {
@@ -83,6 +119,11 @@ namespace geotracker_desktop
         private async void FetchTracksFromCloud()
         {
             var tracksPoints = await tracksProvider.FetchTracks();
+            if (tracksPoints == null)
+            {
+                return;
+            }
+
             var count = tracksPoints.Count;
 
             loadingProgressBar.Maximum = count;
@@ -150,6 +191,11 @@ namespace geotracker_desktop
         {
             toolStripInverseButton.Text = invertedToolStripMenuItem.Text;
             gMapControl.NegativeMode = true;
+        }
+
+        private void gMapControl_OnMapClick(PointLatLng pointClick, MouseEventArgs e)
+        {
+            routeCreator.AddPoint(pointClick);
         }
     }
 }

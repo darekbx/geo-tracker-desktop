@@ -34,11 +34,11 @@
             this.statusStrip = new System.Windows.Forms.StatusStrip();
             this.toolStripZoomLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripMapTypeButton = new System.Windows.Forms.ToolStripDropDownButton();
+            this.toolStripInverseButton = new System.Windows.Forms.ToolStripDropDownButton();
+            this.standardToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.invertedToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.buttonZoomMinus = new System.Windows.Forms.Button();
             this.buttonZoomPlus = new System.Windows.Forms.Button();
-            this.toolStripInverseButton = new System.Windows.Forms.ToolStripDropDownButton();
-            this.invertedToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.standardToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStrip.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -68,6 +68,7 @@
             this.gMapControl.Size = new System.Drawing.Size(1185, 616);
             this.gMapControl.TabIndex = 0;
             this.gMapControl.Zoom = 0D;
+            this.gMapControl.OnMapClick += new GMap.NET.WindowsForms.MapClick(this.gMapControl_OnMapClick);
             this.gMapControl.OnMapZoomChanged += new GMap.NET.MapZoomChanged(this.gMapControl_OnMapZoomChanged);
             this.gMapControl.Load += new System.EventHandler(this.gMapControl1_LoadAsync);
             // 
@@ -106,6 +107,32 @@
             this.toolStripMapTypeButton.Text = "Open Street Maps";
             this.toolStripMapTypeButton.ToolTipText = "Map type";
             // 
+            // toolStripInverseButton
+            // 
+            this.toolStripInverseButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.toolStripInverseButton.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.standardToolStripMenuItem,
+            this.invertedToolStripMenuItem});
+            this.toolStripInverseButton.Image = ((System.Drawing.Image)(resources.GetObject("toolStripInverseButton.Image")));
+            this.toolStripInverseButton.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripInverseButton.Name = "toolStripInverseButton";
+            this.toolStripInverseButton.Size = new System.Drawing.Size(86, 20);
+            this.toolStripInverseButton.Text = "Not inverted";
+            // 
+            // standardToolStripMenuItem
+            // 
+            this.standardToolStripMenuItem.Name = "standardToolStripMenuItem";
+            this.standardToolStripMenuItem.Size = new System.Drawing.Size(140, 22);
+            this.standardToolStripMenuItem.Text = "Not inverted";
+            this.standardToolStripMenuItem.Click += new System.EventHandler(this.standardToolStripMenuItem_Click);
+            // 
+            // invertedToolStripMenuItem
+            // 
+            this.invertedToolStripMenuItem.Name = "invertedToolStripMenuItem";
+            this.invertedToolStripMenuItem.Size = new System.Drawing.Size(140, 22);
+            this.invertedToolStripMenuItem.Text = "Inverted";
+            this.invertedToolStripMenuItem.Click += new System.EventHandler(this.invertedToolStripMenuItem_Click);
+            // 
             // buttonZoomMinus
             // 
             this.buttonZoomMinus.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
@@ -129,32 +156,6 @@
             this.buttonZoomPlus.Text = "+";
             this.buttonZoomPlus.UseVisualStyleBackColor = false;
             this.buttonZoomPlus.Click += new System.EventHandler(this.buttonZoomPlus_Click);
-            // 
-            // toolStripInverseButton
-            // 
-            this.toolStripInverseButton.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.toolStripInverseButton.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.standardToolStripMenuItem,
-            this.invertedToolStripMenuItem});
-            this.toolStripInverseButton.Image = ((System.Drawing.Image)(resources.GetObject("toolStripInverseButton.Image")));
-            this.toolStripInverseButton.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripInverseButton.Name = "toolStripInverseButton";
-            this.toolStripInverseButton.Size = new System.Drawing.Size(89, 20);
-            this.toolStripInverseButton.Text = "Not inverted";
-            // 
-            // invertedToolStripMenuItem
-            // 
-            this.invertedToolStripMenuItem.Name = "invertedToolStripMenuItem";
-            this.invertedToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.invertedToolStripMenuItem.Text = "Inverted";
-            this.invertedToolStripMenuItem.Click += new System.EventHandler(this.invertedToolStripMenuItem_Click);
-            // 
-            // standardToolStripMenuItem
-            // 
-            this.standardToolStripMenuItem.Name = "standardToolStripMenuItem";
-            this.standardToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.standardToolStripMenuItem.Text = "Not inverted";
-            this.standardToolStripMenuItem.Click += new System.EventHandler(this.standardToolStripMenuItem_Click);
             // 
             // MapForm
             // 
