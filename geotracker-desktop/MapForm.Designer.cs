@@ -39,7 +39,18 @@
             this.invertedToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.buttonZoomMinus = new System.Windows.Forms.Button();
             this.buttonZoomPlus = new System.Windows.Forms.Button();
+            this.routePanel = new System.Windows.Forms.Panel();
+            this.labelDistance = new System.Windows.Forms.Label();
+            this.labelDistanceValue = new System.Windows.Forms.Label();
+            this.panelLoading = new System.Windows.Forms.Panel();
+            this.labelLoading = new System.Windows.Forms.Label();
+            this.labelPoints = new System.Windows.Forms.Label();
+            this.labelPointsValue = new System.Windows.Forms.Label();
+            this.buttonUndoPoint = new System.Windows.Forms.Button();
+            this.buttonRouteClear = new System.Windows.Forms.Button();
             this.statusStrip.SuspendLayout();
+            this.routePanel.SuspendLayout();
+            this.panelLoading.SuspendLayout();
             this.SuspendLayout();
             // 
             // gMapControl
@@ -157,11 +168,109 @@
             this.buttonZoomPlus.UseVisualStyleBackColor = false;
             this.buttonZoomPlus.Click += new System.EventHandler(this.buttonZoomPlus_Click);
             // 
+            // routePanel
+            // 
+            this.routePanel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.routePanel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.routePanel.Controls.Add(this.buttonRouteClear);
+            this.routePanel.Controls.Add(this.buttonUndoPoint);
+            this.routePanel.Controls.Add(this.labelPointsValue);
+            this.routePanel.Controls.Add(this.labelPoints);
+            this.routePanel.Controls.Add(this.labelDistanceValue);
+            this.routePanel.Controls.Add(this.labelDistance);
+            this.routePanel.Location = new System.Drawing.Point(999, 504);
+            this.routePanel.Name = "routePanel";
+            this.routePanel.Size = new System.Drawing.Size(132, 74);
+            this.routePanel.TabIndex = 5;
+            this.routePanel.Visible = false;
+            // 
+            // labelDistance
+            // 
+            this.labelDistance.AutoSize = true;
+            this.labelDistance.Location = new System.Drawing.Point(4, 3);
+            this.labelDistance.Name = "labelDistance";
+            this.labelDistance.Size = new System.Drawing.Size(55, 13);
+            this.labelDistance.TabIndex = 0;
+            this.labelDistance.Text = "Distance: ";
+            // 
+            // labelDistanceValue
+            // 
+            this.labelDistanceValue.AutoSize = true;
+            this.labelDistanceValue.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labelDistanceValue.Location = new System.Drawing.Point(55, 3);
+            this.labelDistanceValue.Name = "labelDistanceValue";
+            this.labelDistanceValue.Size = new System.Drawing.Size(34, 13);
+            this.labelDistanceValue.TabIndex = 1;
+            this.labelDistanceValue.Text = "0 km";
+            // 
+            // panelLoading
+            // 
+            this.panelLoading.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.panelLoading.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panelLoading.Controls.Add(this.labelLoading);
+            this.panelLoading.Location = new System.Drawing.Point(486, 213);
+            this.panelLoading.Name = "panelLoading";
+            this.panelLoading.Size = new System.Drawing.Size(200, 200);
+            this.panelLoading.TabIndex = 6;
+            // 
+            // labelLoading
+            // 
+            this.labelLoading.AutoSize = true;
+            this.labelLoading.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labelLoading.Location = new System.Drawing.Point(62, 91);
+            this.labelLoading.Name = "labelLoading";
+            this.labelLoading.Size = new System.Drawing.Size(81, 17);
+            this.labelLoading.TabIndex = 1;
+            this.labelLoading.Text = "Loading...";
+            // 
+            // labelPoints
+            // 
+            this.labelPoints.AutoSize = true;
+            this.labelPoints.Location = new System.Drawing.Point(4, 20);
+            this.labelPoints.Name = "labelPoints";
+            this.labelPoints.Size = new System.Drawing.Size(39, 13);
+            this.labelPoints.TabIndex = 2;
+            this.labelPoints.Text = "Points:";
+            // 
+            // labelPointsValue
+            // 
+            this.labelPointsValue.AutoSize = true;
+            this.labelPointsValue.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labelPointsValue.Location = new System.Drawing.Point(55, 20);
+            this.labelPointsValue.Name = "labelPointsValue";
+            this.labelPointsValue.Size = new System.Drawing.Size(14, 13);
+            this.labelPointsValue.TabIndex = 3;
+            this.labelPointsValue.Text = "0";
+            // 
+            // buttonUndoPoint
+            // 
+            this.buttonUndoPoint.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonUndoPoint.Location = new System.Drawing.Point(67, 39);
+            this.buttonUndoPoint.Name = "buttonUndoPoint";
+            this.buttonUndoPoint.Size = new System.Drawing.Size(60, 30);
+            this.buttonUndoPoint.TabIndex = 4;
+            this.buttonUndoPoint.Text = "Undo";
+            this.buttonUndoPoint.UseVisualStyleBackColor = true;
+            this.buttonUndoPoint.Click += new System.EventHandler(this.buttonUndoPoint_Click);
+            // 
+            // buttonRouteClear
+            // 
+            this.buttonRouteClear.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonRouteClear.Location = new System.Drawing.Point(3, 39);
+            this.buttonRouteClear.Name = "buttonRouteClear";
+            this.buttonRouteClear.Size = new System.Drawing.Size(60, 30);
+            this.buttonRouteClear.TabIndex = 5;
+            this.buttonRouteClear.Text = "Clear";
+            this.buttonRouteClear.UseVisualStyleBackColor = true;
+            this.buttonRouteClear.Click += new System.EventHandler(this.buttonRouteClear_Click);
+            // 
             // MapForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1185, 616);
+            this.Controls.Add(this.panelLoading);
+            this.Controls.Add(this.routePanel);
             this.Controls.Add(this.buttonZoomPlus);
             this.Controls.Add(this.buttonZoomMinus);
             this.Controls.Add(this.statusStrip);
@@ -173,6 +282,10 @@
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.statusStrip.ResumeLayout(false);
             this.statusStrip.PerformLayout();
+            this.routePanel.ResumeLayout(false);
+            this.routePanel.PerformLayout();
+            this.panelLoading.ResumeLayout(false);
+            this.panelLoading.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -190,6 +303,15 @@
         private System.Windows.Forms.ToolStripDropDownButton toolStripInverseButton;
         private System.Windows.Forms.ToolStripMenuItem standardToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem invertedToolStripMenuItem;
+        private System.Windows.Forms.Panel routePanel;
+        private System.Windows.Forms.Label labelDistanceValue;
+        private System.Windows.Forms.Label labelDistance;
+        private System.Windows.Forms.Panel panelLoading;
+        private System.Windows.Forms.Label labelLoading;
+        private System.Windows.Forms.Label labelPoints;
+        private System.Windows.Forms.Label labelPointsValue;
+        private System.Windows.Forms.Button buttonUndoPoint;
+        private System.Windows.Forms.Button buttonRouteClear;
     }
 }
 

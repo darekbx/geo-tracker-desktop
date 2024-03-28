@@ -2,23 +2,19 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Drawing;
-using System.Drawing.Imaging;
 using System.Linq;
 using System.Windows.Forms;
 using geotracker_desktop.cloud;
 using geotracker_desktop.mapproviders;
 using geotracker_desktop.routes;
-using geotracker_desktop.utils;
 using GMap.NET;
 using GMap.NET.MapProviders;
 using GMap.NET.WindowsForms;
+using GMap.NET.WindowsForms.Markers;
 
 /*
  * TODO:
  * - draw route by clicking on map
- *   - display distance
- *   - number of points
- *   - ability to undo added point
  *   - export to gpx
  * - export to image (size of image can be defined in dialog)
  * 
@@ -68,30 +64,43 @@ namespace geotracker_desktop
 
             UpdateZoomLevellLabel();
             FillMapProviders();
+            PlaceLoadingPanel();
         }
 
-        private void RouteCreator_RouteInvalidated(object sender, List<PointLatLng> points)
+        private void RouteCreator_RouteInvalidated(object sender, List<PointLatLng> points, double distance)
+        {
+            if (points.Count > 0)
+            {
+                routePanel.Visible = true;
+            }
+            else
+            {
+                routePanel.Visible = false;
+                routeOverlay.Markers.Clear();
+                routeOverlay.Routes.Clear();
+                return;
+            }
+
+            labelDistanceValue.Text = string.Format("{0:F2} km", distance);
+            labelPointsValue.Text = points.Count.ToString();
+
+            DrawRoute(points);
+        }
+
+        private void DrawRoute(List<PointLatLng> points)
         {
             var route = new GMapRoute(points, "user_route")
             {
-                Stroke = new Pen(Color.Blue, 2.5F)
+                Stroke = new Pen(Color.SteelBlue, 2.5F)
             };
 
-            routeOverlay.Polygons.Clear();
+            routeOverlay.Markers.Clear();
             routeOverlay.Routes.Clear();
 
             foreach (var point in points)
             {
-                double radiusInMeters = 10;
-                double radiusInDegrees = radiusInMeters / (2 * Math.PI * 6378137) * 360;
-
-                GMapPolygon circle = new GMapPolygon(PointLatLngUtils.GetCirclePoints(point, radiusInDegrees), "circle")
-                {
-                    Stroke = new Pen(Color.Blue, 2),
-                    Fill = new SolidBrush(Color.FromArgb(50, Color.Blue))
-                };
-
-                routeOverlay.Polygons.Add(circle);
+                GMarkerGoogle marker = new GMarkerGoogle(point, GMarkerGoogleType.red_small);
+                routeOverlay.Markers.Add(marker);
             }
 
             routeOverlay.Routes.Add(route);
@@ -125,10 +134,9 @@ namespace geotracker_desktop
             }
 
             var count = tracksPoints.Count;
-
             loadingProgressBar.Maximum = count;
 
-            for (int i = 0; i < tracksPoints.Count; i++)
+            for (int i = 0; i < count; i++)
             {
                 var route = new GMapRoute(tracksPoints[i].Select(cloudPoint =>
                 new PointLatLng
@@ -145,6 +153,7 @@ namespace geotracker_desktop
             };
 
             loadingProgressBar.Visible = false;
+            panelLoading.Visible = false;
         }
 
         private void gMapControl_OnMapZoomChanged()
@@ -196,6 +205,34 @@ namespace geotracker_desktop
         private void gMapControl_OnMapClick(PointLatLng pointClick, MouseEventArgs e)
         {
             routeCreator.AddPoint(pointClick);
+        }
+
+        private void PlaceLoadingPanel()
+        {
+            panelLoading.Location = new Point(
+                (this.ClientSize.Width - panelLoading.Size.Width) / 2,
+                (this.ClientSize.Height - panelLoading.Size.Height) / 2
+            );
+        }
+
+        private void buttonUndoPoint_Click(object sender, EventArgs e)
+        {
+            routeCreator.RemoveLastPoint();
+        }
+
+        private void buttonRouteClear_Click(object sender, EventArgs e)
+        {
+            DialogResult result = MessageBox.Show(
+                "Are you sure you want to remote all points?", 
+                "Confirmation", 
+                MessageBoxButtons.YesNo, 
+                MessageBoxIcon.Question
+            );
+
+            if (result == DialogResult.Yes)
+            {
+                routeCreator.Reset();
+            }
         }
     }
 }

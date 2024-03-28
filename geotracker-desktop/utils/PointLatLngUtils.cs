@@ -6,7 +6,7 @@ namespace geotracker_desktop.utils
 {
     internal class PointLatLngUtils
     {
-        public static List<PointLatLng> GetCirclePoints(PointLatLng center, double radiusInDegrees, int numberOfSegments = 12)
+        public static List<PointLatLng> GetCirclePoints(PointLatLng center, double radiusInDegrees, int numberOfSegments = 36)
         {
             List<PointLatLng> points = new List<PointLatLng>();
 
