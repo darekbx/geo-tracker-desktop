@@ -232,6 +232,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="routes\RouteCreator.cs" />
     <Compile Include="utils\GeoUtils.cs" />
+    <Compile Include="utils\GpxCreator.cs" />
     <Compile Include="utils\PointLatLngUtils.cs" />
     <EmbeddedResource Include="MapForm.resx">
       <DependentUpon>MapForm.cs</DependentUpon>

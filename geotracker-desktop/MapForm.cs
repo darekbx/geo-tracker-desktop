@@ -7,6 +7,7 @@ using System.Windows.Forms;
 using geotracker_desktop.cloud;
 using geotracker_desktop.mapproviders;
 using geotracker_desktop.routes;
+using geotracker_desktop.utils;
 using GMap.NET;
 using GMap.NET.MapProviders;
 using GMap.NET.WindowsForms;
@@ -232,6 +233,26 @@ namespace geotracker_desktop
             if (result == DialogResult.Yes)
             {
                 routeCreator.Reset();
+            }
+        }
+
+        private void buttonSave_Click(object sender, EventArgs e)
+        {
+            SaveFileDialog saveFileDialog = new SaveFileDialog();
+
+            saveFileDialog.Filter = "GPX files (*.gpx)|*.gpx|All files (*.*)|*.*"; 
+            saveFileDialog.FilterIndex = 1;
+            saveFileDialog.RestoreDirectory = true;
+            saveFileDialog.FileName = "untitled";
+
+            DialogResult result = saveFileDialog.ShowDialog();
+
+            if (result == DialogResult.OK)
+            {
+                string fileName = saveFileDialog.FileName;
+
+                var points = routeCreator.GetPoints();
+                new GpxCreator().CreateGpx(points, fileName, "New track" /*TODO*/);
             }
         }
     }
