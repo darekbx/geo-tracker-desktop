@@ -17,11 +17,11 @@ namespace geotracker_desktop.cloud
             this.firebaseAppId = firebaseAppId; 
         }
 
-        public async Task<List<List<GeoPoint>>> FetchTracks()
+        public async Task<List<Track>> FetchTracks()
         {
             try
             {
-                var tracksPoints = new List<List<GeoPoint>>();
+                var tracks = new List<Track>();
 
                 FirestoreDb db = FirestoreDb.Create(firebaseAppId);
 
@@ -35,12 +35,20 @@ namespace geotracker_desktop.cloud
                     {
                         Dictionary<string, object> data = document.ToDictionary();
                         var points = data["points"] as String;
-                        List<GeoPoint> trackPoints = JsonConvert.DeserializeObject<List<GeoPoint>>(points);
-                        tracksPoints.Add(trackPoints);
+                        List<TrackPoint> trackPoints = JsonConvert.DeserializeObject<List<TrackPoint>>(points);
+                        var track = new Track(
+                            document.Id,
+                            data["label"] as String,
+                            Convert.ToDouble(data["distance"]),
+                            Convert.ToInt64(data["start_timestamp"]),
+                            Convert.ToInt64(data["end_timestamp"]),
+                            trackPoints
+                        );
+                        tracks.Add(track);
                     }
                 }
 
-                return tracksPoints;
+                return tracks.OrderByDescending(x => x.startTimestamp).ToList();
             }
             catch (Exception e)
             {

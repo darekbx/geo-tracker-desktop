@@ -215,7 +215,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="cloud\ProjectIdProvider.cs" />
+    <Compile Include="cloud\Track.cs" />
+    <Compile Include="cloud\TrackPoint.cs" />
     <Compile Include="cloud\TracksProvider.cs" />
+    <Compile Include="extensions\GMapRouteEx.cs" />
+    <Compile Include="extensions\GMapRouteColored.cs" />
     <Compile Include="MapForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -234,6 +238,7 @@
     <Compile Include="utils\GeoUtils.cs" />
     <Compile Include="utils\GpxCreator.cs" />
     <Compile Include="utils\PointLatLngUtils.cs" />
+    <Compile Include="utils\SpeedToColor.cs" />
     <EmbeddedResource Include="MapForm.resx">
       <DependentUpon>MapForm.cs</DependentUpon>
     </EmbeddedResource>

@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.Linq;
 using System.Windows.Forms;
 using geotracker_desktop.cloud;
+using geotracker_desktop.extensions;
 using geotracker_desktop.mapproviders;
 using geotracker_desktop.routes;
 using geotracker_desktop.utils;
@@ -12,13 +14,16 @@ using GMap.NET;
 using GMap.NET.MapProviders;
 using GMap.NET.WindowsForms;
 using GMap.NET.WindowsForms.Markers;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 /*
  * TODO:
- * - draw route by clicking on map
- *   - export to gpx
+ * - display speed on tracks (enable from settings)
  * - export to image (size of image can be defined in dialog)
- * 
+ * - show list of tracks
+ *   - side panel when clicked single track is shown
+ *   - show elevation and speed
+ * - add button refresh (reload from cloud)
  */
 namespace geotracker_desktop
 {
@@ -128,33 +133,55 @@ namespace geotracker_desktop
 
         private async void FetchTracksFromCloud()
         {
-            var tracksPoints = await tracksProvider.FetchTracks();
-            if (tracksPoints == null)
+            var tracks = await tracksProvider.FetchTracks();
+            if (tracks == null)
             {
                 return;
             }
 
-            var count = tracksPoints.Count;
-            loadingProgressBar.Maximum = count;
+            var count = tracks.Count;
 
             for (int i = 0; i < count; i++)
             {
-                var route = new GMapRoute(tracksPoints[i].Select(cloudPoint =>
-                new PointLatLng
-                {
-                    Lat = cloudPoint.Latitude,
-                    Lng = cloudPoint.Longitude
-                }), $"track_{i}")
+                // Use GmapRouteColored to highlight only one
+                // Don't use for all tracks! It will affect performance!
+                var route = new GMapRouteEx(tracks[i].points, $"track_{i}")
                 {
                     Stroke = new Pen(Color.Red, 1.75F)
                 };
                 overlay.Routes.Add(route);
-
-                loadingProgressBar.Value = i;
             };
 
-            loadingProgressBar.Visible = false;
+            FillList(tracks);
+
             panelLoading.Visible = false;
+        }
+
+        private void FillList(List<Track> tracks)
+        {
+            var count = tracks.Count;
+            tracksListView.View = View.Details;
+            tracksListView.Columns.Add("Date",100);
+            tracksListView.Columns.Add("Distance",80);
+
+            for (int i = 0; i < count; i++)
+            {
+                var track = tracks[i];
+                DateTimeOffset startOffset = DateTimeOffset.FromUnixTimeMilliseconds(track.startTimestamp);
+
+                string formattedDateTime = startOffset.ToString("yyyy-MM-dd HH:mm");
+
+                string[] row = { formattedDateTime, string.Format("{0:F2} km", track.distance/1000) };
+                tracksListView.Items.Add(new ListViewItem(row));
+            }
+        }
+
+        private void ExportMapToImage(string fileName)
+        {
+            Bitmap bmp = new Bitmap(gMapControl.Width, gMapControl.Height);
+            gMapControl.DrawToBitmap(bmp, new Rectangle(0, 0, gMapControl.Width, gMapControl.Height));
+            bmp.Save(fileName, ImageFormat.Png);
+            bmp.Dispose();
         }
 
         private void gMapControl_OnMapZoomChanged()
@@ -250,9 +277,27 @@ namespace geotracker_desktop
             if (result == DialogResult.OK)
             {
                 string fileName = saveFileDialog.FileName;
+                string currentDateTimeString = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
 
                 var points = routeCreator.GetPoints();
-                new GpxCreator().CreateGpx(points, fileName, "New track" /*TODO*/);
+                new GpxCreator().CreateGpx(points, fileName, $"New track ({currentDateTimeString})");
+            }
+        }
+
+        private void buttonExport_Click(object sender, EventArgs e)
+        {
+            SaveFileDialog saveFileDialog = new SaveFileDialog();
+
+            saveFileDialog.Filter = "Image files (*.png)|*.png|All files (*.*)|*.*";
+            saveFileDialog.FilterIndex = 1;
+            saveFileDialog.RestoreDirectory = true;
+            saveFileDialog.FileName = "map_export";
+
+            DialogResult result = saveFileDialog.ShowDialog();
+
+            if (result == DialogResult.OK)
+            {
+                ExportMapToImage(saveFileDialog.FileName);
             }
         }
     }
