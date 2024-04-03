@@ -50,6 +50,8 @@
             this.labelLoading = new System.Windows.Forms.Label();
             this.buttonExport = new System.Windows.Forms.Button();
             this.tracksListView = new System.Windows.Forms.ListView();
+            this.buttonClearSelection = new System.Windows.Forms.Button();
+            this.buttonReload = new System.Windows.Forms.Button();
             this.statusStrip.SuspendLayout();
             this.routePanel.SuspendLayout();
             this.panelLoading.SuspendLayout();
@@ -81,7 +83,7 @@
             this.gMapControl.ScaleMode = GMap.NET.WindowsForms.ScaleModes.Integer;
             this.gMapControl.SelectedAreaFillColor = System.Drawing.Color.FromArgb(((int)(((byte)(33)))), ((int)(((byte)(65)))), ((int)(((byte)(105)))), ((int)(((byte)(225)))));
             this.gMapControl.ShowTileGridLines = false;
-            this.gMapControl.Size = new System.Drawing.Size(844, 599);
+            this.gMapControl.Size = new System.Drawing.Size(791, 599);
             this.gMapControl.TabIndex = 0;
             this.gMapControl.Zoom = 0D;
             this.gMapControl.OnMapClick += new GMap.NET.WindowsForms.MapClick(this.gMapControl_OnMapClick);
@@ -144,7 +146,7 @@
             // buttonZoomMinus
             // 
             this.buttonZoomMinus.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.buttonZoomMinus.Location = new System.Drawing.Point(805, 557);
+            this.buttonZoomMinus.Location = new System.Drawing.Point(749, 557);
             this.buttonZoomMinus.Name = "buttonZoomMinus";
             this.buttonZoomMinus.Size = new System.Drawing.Size(34, 34);
             this.buttonZoomMinus.TabIndex = 3;
@@ -157,7 +159,7 @@
             this.buttonZoomPlus.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.buttonZoomPlus.BackColor = System.Drawing.Color.Transparent;
             this.buttonZoomPlus.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
-            this.buttonZoomPlus.Location = new System.Drawing.Point(805, 517);
+            this.buttonZoomPlus.Location = new System.Drawing.Point(749, 517);
             this.buttonZoomPlus.Name = "buttonZoomPlus";
             this.buttonZoomPlus.Size = new System.Drawing.Size(34, 34);
             this.buttonZoomPlus.TabIndex = 4;
@@ -176,7 +178,7 @@
             this.routePanel.Controls.Add(this.labelPoints);
             this.routePanel.Controls.Add(this.labelDistanceValue);
             this.routePanel.Controls.Add(this.labelDistance);
-            this.routePanel.Location = new System.Drawing.Point(578, 517);
+            this.routePanel.Location = new System.Drawing.Point(522, 516);
             this.routePanel.Name = "routePanel";
             this.routePanel.Size = new System.Drawing.Size(221, 74);
             this.routePanel.TabIndex = 5;
@@ -258,7 +260,7 @@
             this.panelLoading.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.panelLoading.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.panelLoading.Controls.Add(this.labelLoading);
-            this.panelLoading.Location = new System.Drawing.Point(429, 219);
+            this.panelLoading.Location = new System.Drawing.Point(314, 202);
             this.panelLoading.Name = "panelLoading";
             this.panelLoading.Size = new System.Drawing.Size(200, 200);
             this.panelLoading.TabIndex = 6;
@@ -291,18 +293,43 @@
             this.tracksListView.FullRowSelect = true;
             this.tracksListView.GridLines = true;
             this.tracksListView.HideSelection = false;
-            this.tracksListView.Location = new System.Drawing.Point(854, 4);
+            this.tracksListView.Location = new System.Drawing.Point(801, 4);
             this.tracksListView.MultiSelect = false;
             this.tracksListView.Name = "tracksListView";
-            this.tracksListView.Size = new System.Drawing.Size(210, 599);
+            this.tracksListView.Size = new System.Drawing.Size(263, 570);
             this.tracksListView.TabIndex = 8;
             this.tracksListView.UseCompatibleStateImageBehavior = false;
+            this.tracksListView.ItemSelectionChanged += new System.Windows.Forms.ListViewItemSelectionChangedEventHandler(this.tracksListView_ItemSelectionChanged);
+            // 
+            // buttonClearSelection
+            // 
+            this.buttonClearSelection.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.buttonClearSelection.Location = new System.Drawing.Point(801, 580);
+            this.buttonClearSelection.Name = "buttonClearSelection";
+            this.buttonClearSelection.Size = new System.Drawing.Size(263, 23);
+            this.buttonClearSelection.TabIndex = 9;
+            this.buttonClearSelection.Text = "Clear selection";
+            this.buttonClearSelection.UseVisualStyleBackColor = true;
+            this.buttonClearSelection.Click += new System.EventHandler(this.buttonClearSelection_Click);
+            // 
+            // buttonReload
+            // 
+            this.buttonReload.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.buttonReload.Location = new System.Drawing.Point(12, 538);
+            this.buttonReload.Name = "buttonReload";
+            this.buttonReload.Size = new System.Drawing.Size(92, 23);
+            this.buttonReload.TabIndex = 10;
+            this.buttonReload.Text = "Reload";
+            this.buttonReload.UseVisualStyleBackColor = true;
+            this.buttonReload.Click += new System.EventHandler(this.buttonReload_Click);
             // 
             // MapForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1070, 628);
+            this.Controls.Add(this.buttonReload);
+            this.Controls.Add(this.buttonClearSelection);
             this.Controls.Add(this.tracksListView);
             this.Controls.Add(this.panelLoading);
             this.Controls.Add(this.routePanel);
@@ -349,6 +376,8 @@
         private System.Windows.Forms.Button buttonSave;
         private System.Windows.Forms.Button buttonExport;
         private System.Windows.Forms.ListView tracksListView;
+        private System.Windows.Forms.Button buttonClearSelection;
+        private System.Windows.Forms.Button buttonReload;
     }
 }
 

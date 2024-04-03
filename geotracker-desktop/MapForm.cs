@@ -4,6 +4,7 @@ using System.Data;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Linq;
+using System.Reflection;
 using System.Windows.Forms;
 using geotracker_desktop.cloud;
 using geotracker_desktop.extensions;
@@ -18,12 +19,7 @@ using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 /*
  * TODO:
- * - display speed on tracks (enable from settings)
  * - export to image (size of image can be defined in dialog)
- * - show list of tracks
- *   - side panel when clicked single track is shown
- *   - show elevation and speed
- * - add button refresh (reload from cloud)
  */
 namespace geotracker_desktop
 {
@@ -35,6 +31,9 @@ namespace geotracker_desktop
 
         private readonly GMapOverlay overlay;
         private readonly GMapOverlay routeOverlay;
+        private readonly GMapOverlay selectedRouteOverlay;
+
+        private List<Track> tracksCache;
 
         private readonly List<IMapProvider> providers = new List<IMapProvider>
         {
@@ -47,12 +46,13 @@ namespace geotracker_desktop
         public MapForm()
         {
             InitializeComponent();
+            this.Icon = Icon.ExtractAssociatedIcon("app_icon.ico");
 
             gMapControl.Position = new PointLatLng(52.2, 21.0);
             gMapControl.MapProvider = OpenStreetMapProvider.Instance;
             gMapControl.MinZoom = 4;
             gMapControl.MaxZoom = 20;
-            gMapControl.Zoom = 10;
+            gMapControl.Zoom = 11;
             gMapControl.MouseWheelZoomEnabled = false;
             gMapControl.MarkersEnabled = true;
             gMapControl.DragButton = MouseButtons.Left;
@@ -60,9 +60,11 @@ namespace geotracker_desktop
 
             overlay = new GMapOverlay("routesOverlay");
             routeOverlay = new GMapOverlay("routeOverlay");
+            selectedRouteOverlay = new GMapOverlay("selectedRouteOverlay");
 
             gMapControl.Overlays.Add(overlay);
             gMapControl.Overlays.Add(routeOverlay);
+            gMapControl.Overlays.Add(selectedRouteOverlay);
 
             tracksProvider = new TracksProvider(projectIdprovider.GetApiKey());
 
@@ -139,6 +141,8 @@ namespace geotracker_desktop
                 return;
             }
 
+            this.tracksCache = tracks;
+
             var count = tracks.Count;
 
             for (int i = 0; i < count; i++)
@@ -161,17 +165,26 @@ namespace geotracker_desktop
         {
             var count = tracks.Count;
             tracksListView.View = View.Details;
-            tracksListView.Columns.Add("Date",100);
-            tracksListView.Columns.Add("Distance",80);
+            tracksListView.Columns.Add("Date", 100);
+            tracksListView.Columns.Add("Distance", 70);
+            tracksListView.Columns.Add("Time", 70);
 
             for (int i = 0; i < count; i++)
             {
                 var track = tracks[i];
                 DateTimeOffset startOffset = DateTimeOffset.FromUnixTimeMilliseconds(track.startTimestamp);
 
-                string formattedDateTime = startOffset.ToString("yyyy-MM-dd HH:mm");
+                string formattedDateTime = startOffset.ToString("yyyy-MM-dd");
+                long timeDifference = track.endTimestamp - track.startTimestamp;
+                TimeSpan timeSpan = TimeSpan.FromMilliseconds(timeDifference);
+                string hours = timeSpan.Hours.ToString("00");
+                string minutes = timeSpan.Minutes.ToString("00");
 
-                string[] row = { formattedDateTime, string.Format("{0:F2} km", track.distance/1000) };
+                string[] row = {
+                    formattedDateTime,
+                    string.Format("{0:F2} km", track.distance / 1000),
+                    $"{hours}h {minutes}m"
+                };
                 tracksListView.Items.Add(new ListViewItem(row));
             }
         }
@@ -299,6 +312,45 @@ namespace geotracker_desktop
             {
                 ExportMapToImage(saveFileDialog.FileName);
             }
+        }
+
+        private void tracksListView_ItemSelectionChanged(object sender, ListViewItemSelectionChangedEventArgs e)
+        {
+            var index = e.ItemIndex;
+
+            overlay.IsVisibile = false;
+            selectedRouteOverlay.Clear();
+
+            if (tracksCache != null && tracksCache.Count > 0)
+            {
+                var route = new GMapRouteColored(tracksCache[index].points, 3F, $"track_{index}")
+                {
+                    Stroke = new Pen(Color.Red, 3F)
+                };
+                selectedRouteOverlay.Routes.Add(route);
+            }
+        }
+
+        private void buttonClearSelection_Click(object sender, EventArgs e)
+        {
+            this.tracksListView.SelectedItems.Clear();
+            this.tracksListView.Update();
+
+            overlay.IsVisibile = true;
+            selectedRouteOverlay.Clear();
+        }
+
+        private void buttonReload_Click(object sender, EventArgs e)
+        {
+            panelLoading.Visible = true;
+
+            overlay.Clear();
+            routeOverlay.Clear();
+            selectedRouteOverlay.Clear();
+            tracksListView.Items.Clear();
+            tracksListView.Columns.Clear();
+
+            FetchTracksFromCloud();
         }
     }
 }

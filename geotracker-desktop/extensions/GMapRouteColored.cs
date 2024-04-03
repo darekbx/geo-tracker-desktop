@@ -12,8 +12,9 @@ namespace geotracker_desktop.extensions
     public class GMapRouteColored : GMap.NET.WindowsForms.GMapRoute
     {
         public List<TrackPoint> trackPoints;
+        public float strokeWidth;
 
-        public GMapRouteColored(List<TrackPoint> points, string name)
+        public GMapRouteColored(List<TrackPoint> points, float strokeWidth, string name)
             : base(points.Select(cloudPoint =>
                 new PointLatLng
                 {
@@ -22,17 +23,17 @@ namespace geotracker_desktop.extensions
                 }), name)
         {
             this.trackPoints = points;
+            this.strokeWidth = strokeWidth;
         }
 
         public override void OnRender(Graphics g)
         {
-            var pen = new Pen(Color.Black, 1.75F);
+            var pen = new Pen(Color.Black, strokeWidth);
             for (int i = 0; i < LocalPoints.Count - 1; i++)
             {
                 pen.Color = SpeedToColor.toColor(trackPoints[i].Speed);
                 g.DrawLine(pen, LocalPoints[i].X, LocalPoints[i].Y, LocalPoints[i + 1].X, LocalPoints[i + 1].Y);
             }
-
         }
     }
 }

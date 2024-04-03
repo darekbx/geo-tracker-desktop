@@ -11,7 +11,7 @@ namespace geotracker_desktop.utils
     {
         public static Color toColor(double speed)
         {
-            const double maxSpeed = 10.0;
+            const double maxSpeed = 12.0;
 
             // Ensure speed is within the valid range (0 to maxSpeed)
             speed = Math.Max(0, Math.Min(speed, maxSpeed));
@@ -19,10 +19,10 @@ namespace geotracker_desktop.utils
             // Map speed to the range 0 to 1
             double normalizedSpeed = speed / maxSpeed;
 
-            // Map normalized speed to a color gradient from blue to red
-            int blue = (int)(255 * (1 - normalizedSpeed));
+            // Map normalized speed to a color gradient from green to red
+            int blue = 0;
             int red = (int)(255 * normalizedSpeed);
-            int green = 0; // No green component
+            int green = (int)(255 * (1 - normalizedSpeed)); 
 
             // Create and return the corresponding color
             return Color.FromArgb(red, green, blue);
