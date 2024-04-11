@@ -9,10 +9,8 @@ namespace geotracker_desktop.utils
 {
     internal static class SpeedToColor
     {
-        public static Color toColor(double speed)
+        public static Color toColor(double speed, double maxSpeed)
         {
-            const double maxSpeed = 12.0;
-
             // Ensure speed is within the valid range (0 to maxSpeed)
             speed = Math.Max(0, Math.Min(speed, maxSpeed));
 

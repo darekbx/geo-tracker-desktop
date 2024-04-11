@@ -13,6 +13,7 @@ namespace geotracker_desktop.extensions
     {
         public List<TrackPoint> trackPoints;
         public float strokeWidth;
+        private double maxSpeed;
 
         public GMapRouteColored(List<TrackPoint> points, float strokeWidth, string name)
             : base(points.Select(cloudPoint =>
@@ -24,6 +25,7 @@ namespace geotracker_desktop.extensions
         {
             this.trackPoints = points;
             this.strokeWidth = strokeWidth;
+            this.maxSpeed = points.Max(p => p.Speed);
         }
 
         public override void OnRender(Graphics g)
@@ -31,7 +33,7 @@ namespace geotracker_desktop.extensions
             var pen = new Pen(Color.Black, strokeWidth);
             for (int i = 0; i < LocalPoints.Count - 1; i++)
             {
-                pen.Color = SpeedToColor.toColor(trackPoints[i].Speed);
+                pen.Color = SpeedToColor.toColor(trackPoints[i].Speed, this.maxSpeed);
                 g.DrawLine(pen, LocalPoints[i].X, LocalPoints[i].Y, LocalPoints[i + 1].X, LocalPoints[i + 1].Y);
             }
         }
