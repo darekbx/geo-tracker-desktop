@@ -232,7 +232,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="cloud\LocationTracker.cs" />
     <Compile Include="cloud\ProjectIdProvider.cs" />
+    <Compile Include="cloud\RealLocation.cs" />
     <Compile Include="cloud\Track.cs" />
     <Compile Include="cloud\TrackPoint.cs" />
     <Compile Include="cloud\TracksProvider.cs" />

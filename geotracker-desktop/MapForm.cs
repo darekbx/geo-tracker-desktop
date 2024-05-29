@@ -15,7 +15,6 @@ using GMap.NET;
 using GMap.NET.MapProviders;
 using GMap.NET.WindowsForms;
 using GMap.NET.WindowsForms.Markers;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 /*
  * TODO:
@@ -23,15 +22,20 @@ using static System.Windows.Forms.VisualStyles.VisualStyleElement;
  */
 namespace geotracker_desktop
 {
+
     public partial class MapForm : Form
     {
+        private string haslo = "haslomaslo";
+
         private readonly ProjectIdProvider projectIdprovider = new ProjectIdProvider();
         private readonly RouteCreator routeCreator = new RouteCreator();
         private readonly TracksProvider tracksProvider;
+        private readonly LocationTracker locationTracker;
 
         private readonly GMapOverlay overlay;
         private readonly GMapOverlay routeOverlay;
         private readonly GMapOverlay selectedRouteOverlay;
+        private readonly GMapOverlay realLocationOverlay;
 
         private List<Track> tracksCache;
 
@@ -57,22 +61,60 @@ namespace geotracker_desktop
             gMapControl.MarkersEnabled = true;
             gMapControl.DragButton = MouseButtons.Left;
             gMapControl.ShowCenter = false;
+            gMapControl.Tag = haslo;
 
             overlay = new GMapOverlay("routesOverlay");
             routeOverlay = new GMapOverlay("routeOverlay");
             selectedRouteOverlay = new GMapOverlay("selectedRouteOverlay");
+            realLocationOverlay = new GMapOverlay("realLocationOverlay");
 
             gMapControl.Overlays.Add(overlay);
             gMapControl.Overlays.Add(routeOverlay);
             gMapControl.Overlays.Add(selectedRouteOverlay);
+            gMapControl.Overlays.Add(realLocationOverlay);
 
             tracksProvider = new TracksProvider(projectIdprovider.GetApiKey());
+            locationTracker = new LocationTracker(projectIdprovider.GetApiKey());
 
             routeCreator.RouteInvalidated += RouteCreator_RouteInvalidated;
+
+            StartLocationTracker();
 
             UpdateZoomLevellLabel();
             FillMapProviders();
             PlaceLoadingPanel();
+        }
+
+        private void StartLocationTracker()
+        {
+            var points = new List<PointLatLng>();
+            locationTracker.SubscribeForUpdates(realLocation =>
+            {
+                realLocationOverlay.Markers.Clear();
+                realLocationOverlay.Routes.Clear();
+
+                var point = new PointLatLng(realLocation.latitude, realLocation.longitude);
+                GMarkerGoogle marker = new GMarkerGoogle(point, GMarkerGoogleType.purple);
+                realLocationOverlay.Markers.Add(marker);
+
+                TimeZoneInfo timeZoneInfo = TimeZoneInfo.Local;
+                DateTimeOffset dateTime = TimeZoneInfo.ConvertTime( DateTimeOffset.FromUnixTimeMilliseconds(realLocation.timestamp), timeZoneInfo);
+
+                string formattedDateTime = dateTime.ToString("yyyy-MM-dd HH:mm:ss");
+
+                liveSpeedText.Text = string.Format("{0:N2}km/h", realLocation.speed * 3.6F);
+                labelLiveAltitudeText.Text = string.Format("{0:N2}m", realLocation.altitude);
+                labelLiveTimeText.Text = formattedDateTime;
+
+                points.Add(point);
+
+                var route = new GMap.NET.WindowsForms.GMapRoute(points, "user_route")
+                {
+                    Stroke = new Pen(Color.Purple, 3F)
+                };
+
+                routeOverlay.Routes.Add(route);
+            });
         }
 
         private void RouteCreator_RouteInvalidated(object sender, List<PointLatLng> points, double distance)
@@ -97,7 +139,7 @@ namespace geotracker_desktop
 
         private void DrawRoute(List<PointLatLng> points)
         {
-            var route = new GMapRoute(points, "user_route")
+            var route = new GMap.NET.WindowsForms.GMapRoute(points, "user_route")
             {
                 Stroke = new Pen(Color.SteelBlue, 2.5F)
             };
@@ -250,7 +292,7 @@ namespace geotracker_desktop
 
         private void PlaceLoadingPanel()
         {
-            panelLoading.Location = new Point(
+            panelLoading.Location = new System.Drawing.Point(
                 (this.ClientSize.Width - panelLoading.Size.Width) / 2,
                 (this.ClientSize.Height - panelLoading.Size.Height) / 2
             );
@@ -352,5 +394,6 @@ namespace geotracker_desktop
 
             FetchTracksFromCloud();
         }
+
     }
 }

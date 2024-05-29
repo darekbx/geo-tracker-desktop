@@ -52,9 +52,17 @@
             this.tracksListView = new System.Windows.Forms.ListView();
             this.buttonClearSelection = new System.Windows.Forms.Button();
             this.buttonReload = new System.Windows.Forms.Button();
+            this.liveLocationPanel = new System.Windows.Forms.Panel();
+            this.labelLiveAltitudeText = new System.Windows.Forms.Label();
+            this.labelLiveAltitude = new System.Windows.Forms.Label();
+            this.labelLiveTimeText = new System.Windows.Forms.Label();
+            this.labelLiveTime = new System.Windows.Forms.Label();
+            this.liveSpeedText = new System.Windows.Forms.Label();
+            this.labelLiveSpeed = new System.Windows.Forms.Label();
             this.statusStrip.SuspendLayout();
             this.routePanel.SuspendLayout();
             this.panelLoading.SuspendLayout();
+            this.liveLocationPanel.SuspendLayout();
             this.SuspendLayout();
             // 
             // gMapControl
@@ -323,11 +331,83 @@
             this.buttonReload.UseVisualStyleBackColor = true;
             this.buttonReload.Click += new System.EventHandler(this.buttonReload_Click);
             // 
+            // liveLocationPanel
+            // 
+            this.liveLocationPanel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.liveLocationPanel.Controls.Add(this.labelLiveAltitudeText);
+            this.liveLocationPanel.Controls.Add(this.labelLiveAltitude);
+            this.liveLocationPanel.Controls.Add(this.labelLiveTimeText);
+            this.liveLocationPanel.Controls.Add(this.labelLiveTime);
+            this.liveLocationPanel.Controls.Add(this.liveSpeedText);
+            this.liveLocationPanel.Controls.Add(this.labelLiveSpeed);
+            this.liveLocationPanel.Location = new System.Drawing.Point(12, 12);
+            this.liveLocationPanel.Name = "liveLocationPanel";
+            this.liveLocationPanel.Size = new System.Drawing.Size(193, 61);
+            this.liveLocationPanel.TabIndex = 11;
+            // 
+            // labelLiveAltitudeText
+            // 
+            this.labelLiveAltitudeText.AutoSize = true;
+            this.labelLiveAltitudeText.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labelLiveAltitudeText.Location = new System.Drawing.Point(59, 40);
+            this.labelLiveAltitudeText.Name = "labelLiveAltitudeText";
+            this.labelLiveAltitudeText.Size = new System.Drawing.Size(23, 13);
+            this.labelLiveAltitudeText.TabIndex = 7;
+            this.labelLiveAltitudeText.Text = "0m";
+            // 
+            // labelLiveAltitude
+            // 
+            this.labelLiveAltitude.AutoSize = true;
+            this.labelLiveAltitude.Location = new System.Drawing.Point(5, 40);
+            this.labelLiveAltitude.Name = "labelLiveAltitude";
+            this.labelLiveAltitude.Size = new System.Drawing.Size(48, 13);
+            this.labelLiveAltitude.TabIndex = 6;
+            this.labelLiveAltitude.Text = "Altitude: ";
+            // 
+            // labelLiveTimeText
+            // 
+            this.labelLiveTimeText.AutoSize = true;
+            this.labelLiveTimeText.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labelLiveTimeText.Location = new System.Drawing.Point(59, 4);
+            this.labelLiveTimeText.Name = "labelLiveTimeText";
+            this.labelLiveTimeText.Size = new System.Drawing.Size(125, 13);
+            this.labelLiveTimeText.TabIndex = 5;
+            this.labelLiveTimeText.Text = "2000-01-01 12:00:00";
+            // 
+            // labelLiveTime
+            // 
+            this.labelLiveTime.AutoSize = true;
+            this.labelLiveTime.Location = new System.Drawing.Point(5, 4);
+            this.labelLiveTime.Name = "labelLiveTime";
+            this.labelLiveTime.Size = new System.Drawing.Size(36, 13);
+            this.labelLiveTime.TabIndex = 4;
+            this.labelLiveTime.Text = "Time: ";
+            // 
+            // liveSpeedText
+            // 
+            this.liveSpeedText.AutoSize = true;
+            this.liveSpeedText.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.liveSpeedText.Location = new System.Drawing.Point(59, 22);
+            this.liveSpeedText.Name = "liveSpeedText";
+            this.liveSpeedText.Size = new System.Drawing.Size(47, 13);
+            this.liveSpeedText.TabIndex = 3;
+            this.liveSpeedText.Text = "0 km/h";
+            // 
+            // labelLiveSpeed
+            // 
+            this.labelLiveSpeed.AutoSize = true;
+            this.labelLiveSpeed.Location = new System.Drawing.Point(5, 22);
+            this.labelLiveSpeed.Name = "labelLiveSpeed";
+            this.labelLiveSpeed.Size = new System.Drawing.Size(44, 13);
+            this.labelLiveSpeed.TabIndex = 2;
+            this.labelLiveSpeed.Text = "Speed: ";
+            // 
             // MapForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1070, 628);
+            this.Controls.Add(this.liveLocationPanel);
             this.Controls.Add(this.buttonReload);
             this.Controls.Add(this.buttonClearSelection);
             this.Controls.Add(this.tracksListView);
@@ -348,6 +428,8 @@
             this.routePanel.PerformLayout();
             this.panelLoading.ResumeLayout(false);
             this.panelLoading.PerformLayout();
+            this.liveLocationPanel.ResumeLayout(false);
+            this.liveLocationPanel.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -378,6 +460,13 @@
         private System.Windows.Forms.ListView tracksListView;
         private System.Windows.Forms.Button buttonClearSelection;
         private System.Windows.Forms.Button buttonReload;
+        private System.Windows.Forms.Panel liveLocationPanel;
+        private System.Windows.Forms.Label liveSpeedText;
+        private System.Windows.Forms.Label labelLiveSpeed;
+        private System.Windows.Forms.Label labelLiveAltitudeText;
+        private System.Windows.Forms.Label labelLiveAltitude;
+        private System.Windows.Forms.Label labelLiveTimeText;
+        private System.Windows.Forms.Label labelLiveTime;
     }
 }
 
