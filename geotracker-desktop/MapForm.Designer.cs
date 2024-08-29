@@ -59,6 +59,7 @@
             this.labelLiveTime = new System.Windows.Forms.Label();
             this.liveSpeedText = new System.Windows.Forms.Label();
             this.labelLiveSpeed = new System.Windows.Forms.Label();
+            this.buttonTurbines = new System.Windows.Forms.Button();
             this.statusStrip.SuspendLayout();
             this.routePanel.SuspendLayout();
             this.panelLoading.SuspendLayout();
@@ -288,7 +289,7 @@
             this.buttonExport.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.buttonExport.Location = new System.Drawing.Point(12, 567);
             this.buttonExport.Name = "buttonExport";
-            this.buttonExport.Size = new System.Drawing.Size(92, 23);
+            this.buttonExport.Size = new System.Drawing.Size(115, 23);
             this.buttonExport.TabIndex = 7;
             this.buttonExport.Text = "Export to image";
             this.buttonExport.UseVisualStyleBackColor = true;
@@ -325,7 +326,7 @@
             this.buttonReload.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.buttonReload.Location = new System.Drawing.Point(12, 538);
             this.buttonReload.Name = "buttonReload";
-            this.buttonReload.Size = new System.Drawing.Size(92, 23);
+            this.buttonReload.Size = new System.Drawing.Size(115, 23);
             this.buttonReload.TabIndex = 10;
             this.buttonReload.Text = "Reload";
             this.buttonReload.UseVisualStyleBackColor = true;
@@ -402,11 +403,23 @@
             this.labelLiveSpeed.TabIndex = 2;
             this.labelLiveSpeed.Text = "Speed: ";
             // 
+            // buttonTurbines
+            // 
+            this.buttonTurbines.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.buttonTurbines.Location = new System.Drawing.Point(12, 509);
+            this.buttonTurbines.Name = "buttonTurbines";
+            this.buttonTurbines.Size = new System.Drawing.Size(115, 23);
+            this.buttonTurbines.TabIndex = 12;
+            this.buttonTurbines.Text = "Load Wind Turbines";
+            this.buttonTurbines.UseVisualStyleBackColor = true;
+            this.buttonTurbines.Click += new System.EventHandler(this.buttonTurbines_Click);
+            // 
             // MapForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1070, 628);
+            this.Controls.Add(this.buttonTurbines);
             this.Controls.Add(this.liveLocationPanel);
             this.Controls.Add(this.buttonReload);
             this.Controls.Add(this.buttonClearSelection);
@@ -467,6 +480,7 @@
         private System.Windows.Forms.Label labelLiveAltitude;
         private System.Windows.Forms.Label labelLiveTimeText;
         private System.Windows.Forms.Label labelLiveTime;
+        private System.Windows.Forms.Button buttonTurbines;
     }
 }
 

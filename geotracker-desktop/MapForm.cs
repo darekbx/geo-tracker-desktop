@@ -4,7 +4,6 @@ using System.Data;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Linq;
-using System.Reflection;
 using System.Windows.Forms;
 using geotracker_desktop.cloud;
 using geotracker_desktop.extensions;
@@ -15,6 +14,7 @@ using GMap.NET;
 using GMap.NET.MapProviders;
 using GMap.NET.WindowsForms;
 using GMap.NET.WindowsForms.Markers;
+using GMap.NET.WindowsForms.ToolTips;
 
 /*
  * TODO:
@@ -29,6 +29,7 @@ namespace geotracker_desktop
 
         private readonly ProjectIdProvider projectIdprovider = new ProjectIdProvider();
         private readonly RouteCreator routeCreator = new RouteCreator();
+        private readonly WindTurbines windTurbines = new WindTurbines();
         private readonly TracksProvider tracksProvider;
         private readonly LocationTracker locationTracker;
 
@@ -36,6 +37,7 @@ namespace geotracker_desktop
         private readonly GMapOverlay routeOverlay;
         private readonly GMapOverlay selectedRouteOverlay;
         private readonly GMapOverlay realLocationOverlay;
+        private readonly GMapOverlay turbinesOverlay;
 
         private List<Track> tracksCache;
 
@@ -67,11 +69,13 @@ namespace geotracker_desktop
             routeOverlay = new GMapOverlay("routeOverlay");
             selectedRouteOverlay = new GMapOverlay("selectedRouteOverlay");
             realLocationOverlay = new GMapOverlay("realLocationOverlay");
+            turbinesOverlay = new GMapOverlay("turbinesOverlay");
 
             gMapControl.Overlays.Add(overlay);
             gMapControl.Overlays.Add(routeOverlay);
             gMapControl.Overlays.Add(selectedRouteOverlay);
             gMapControl.Overlays.Add(realLocationOverlay);
+            gMapControl.Overlays.Add(turbinesOverlay);
 
             tracksProvider = new TracksProvider(projectIdprovider.GetApiKey());
             locationTracker = new LocationTracker(projectIdprovider.GetApiKey());
@@ -395,5 +399,24 @@ namespace geotracker_desktop
             FetchTracksFromCloud();
         }
 
+        private async void buttonTurbines_Click(object sender, EventArgs e)
+        {
+            //Copy this file to bin/Debug and bin/Release
+            panelLoading.Visible = true;
+            var turbines = await windTurbines.LoadWindTurbinesAsync();
+            if (turbines != null)
+            {
+                foreach (var turbine in turbines)
+                {
+                    GMarkerGoogle marker = new GMarkerGoogle(turbine.LatLng, GMarkerGoogleType.orange_small);
+                    marker.ToolTipMode = MarkerTooltipMode.OnMouseOver;
+                    marker.ToolTip = new GMapBaloonToolTip(marker);
+                    marker.ToolTipText = turbine.TagsToString();
+                    routeOverlay.Markers.Add(marker);
+                }
+
+            }
+            panelLoading.Visible = false;
+        }
     }
 }
