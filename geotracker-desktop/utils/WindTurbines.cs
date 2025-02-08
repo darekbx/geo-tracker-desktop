@@ -37,7 +37,7 @@ namespace geotracker_desktop.utils
 
         public async Task<List<WindTurbine>> LoadWindTurbinesAsync()
         {
-            string url = "https://overpass-api.de/api/interpreter?data=%5Bout%3Ajson%5D%5Btimeout%3A25%5D%3B%0Anwr%5B%22generator%3Amethod%22%3D%22wind_turbine%22%5D%2851.51219196266224%2C18.468017578125004%2C52.902305628635254%2C23.9007568359375%29%3B%0Aout%20geom%3B";
+            string url = "https://overpass-api.de/api/interpreter?data=%5Bout%3Ajson%5D%5Btimeout%3A25%5D%3B%0Anwr%5B%22generator%3Amethod%22%3D%22wind_turbine%22%5D%2850.0%2C15.0%2C54.7%2C23.9%29%3B%0Aout%20geom%3B";
 
             var windTurbines = new List<WindTurbine>();
 
