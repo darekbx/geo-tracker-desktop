@@ -15,6 +15,7 @@ using GMap.NET.MapProviders;
 using GMap.NET.WindowsForms;
 using GMap.NET.WindowsForms.Markers;
 using GMap.NET.WindowsForms.ToolTips;
+using static GMap.NET.Entity.OpenStreetMapGraphHopperGeocodeEntity;
 
 /*
  * TODO:
@@ -32,6 +33,7 @@ namespace geotracker_desktop
         private readonly WindTurbines windTurbines = new WindTurbines();
         private readonly TracksProvider tracksProvider;
         private readonly LocationTracker locationTracker;
+        private readonly PlacesToVisit placesToVisit;
 
         private readonly GMapOverlay overlay;
         private readonly GMapOverlay routeOverlay;
@@ -79,6 +81,7 @@ namespace geotracker_desktop
 
             tracksProvider = new TracksProvider(projectIdprovider.GetApiKey());
             locationTracker = new LocationTracker(projectIdprovider.GetApiKey());
+            placesToVisit = new PlacesToVisit(projectIdprovider.GetApiKey());
 
             routeCreator.RouteInvalidated += RouteCreator_RouteInvalidated;
 
@@ -102,7 +105,7 @@ namespace geotracker_desktop
                 realLocationOverlay.Markers.Add(marker);
 
                 TimeZoneInfo timeZoneInfo = TimeZoneInfo.Local;
-                DateTimeOffset dateTime = TimeZoneInfo.ConvertTime( DateTimeOffset.FromUnixTimeMilliseconds(realLocation.timestamp), timeZoneInfo);
+                DateTimeOffset dateTime = TimeZoneInfo.ConvertTime(DateTimeOffset.FromUnixTimeMilliseconds(realLocation.timestamp), timeZoneInfo);
 
                 string formattedDateTime = dateTime.ToString("yyyy-MM-dd HH:mm:ss");
 
@@ -162,6 +165,7 @@ namespace geotracker_desktop
 
         private void gMapControl1_LoadAsync(object sender, EventArgs e) {
             FetchTracksFromCloud();
+            FetchPlacesToVisitFromCloud();
         }
 
         private void FillMapProviders()
@@ -177,6 +181,27 @@ namespace geotracker_desktop
                 return item;
             }
             ).ToArray());
+        }
+
+        private async void FetchPlacesToVisitFromCloud()
+        {
+            var items = await placesToVisit.FetchPlacesToVisit();
+            if (items == null)
+            {
+                return;
+            }
+
+            var count = items.Count;
+
+            for (int i = 0; i < count; i++)
+            {
+                var point = new PointLatLng(items[i].latitude, items[i].longitude);
+                GMarkerGoogle marker = new GMarkerGoogle(point, GMarkerGoogleType.black_small);
+                marker.ToolTipMode = MarkerTooltipMode.OnMouseOver;
+                marker.ToolTip = new GMapBaloonToolTip(marker);
+                marker.ToolTipText = items[i].label;
+                routeOverlay.Markers.Add(marker);
+            };
         }
 
         private async void FetchTracksFromCloud()
